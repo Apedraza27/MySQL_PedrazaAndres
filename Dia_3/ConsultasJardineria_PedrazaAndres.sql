@@ -824,7 +824,7 @@ INSERT INTO pago VALUES (30,'PayPal','ak-std-000024','2009-01-16',7863);
 INSERT INTO pago VALUES (35,'PayPal','ak-std-000025','2007-10-06',3321);
 INSERT INTO pago VALUES (38,'PayPal','ak-std-000026','2006-05-26',1171);
 
--- ### CONSULTAS ### --- 
+-- ##### CONSULTAS SOBRE UNA TABLA ##### -- 
 
 -- ## 1 ## --
 -- Devuelve un listado con el código de oficina y la ciudad donde hay oficinas.
@@ -835,15 +835,97 @@ select codigo_oficina, ciudad from oficina;
 select ciudad, telefono from oficina where pais='España';
 -- ## 3 ## --
 -- Devuelve un listado con el nombre, apellidos y email de los empleados cuyo jefe tiene un código de jefe igual a 7.
+select nombre, apellido1, apellido2, email from empleado where codigo_jefe= '7';
 
 -- ## 4 ## --
 -- Devuelve el nombre del puesto, nombre, apellidos y email del jefe de la empresa.
+select puesto, nombre, apellido1, apellido2, email from empleado where puesto='Director General';
 
 -- ## 5 ## --
 -- Devuelve un listado con el nombre, apellidos y puesto de aquellos empleados que no sean representantes de ventas.
+select nombre, apellido1, apellido2, puesto from empleado where puesto≠'Representante Ventas';
 
 -- ## 6 ## --
 -- Devuelve un listado con el nombre de los todos los clientes españoles.
+select nombre from cliente where pais='Spain';
 
 -- ## 7 ## --
 -- Devuelve un listado con los distintos estados por los que puede pasar un pedido.
+select estado from pedido,
+
+-- ## 8 ## --
+-- Devuelve un listado con el código de cliente de aquellos clientes que realizaron algún pago en 2008. Tenga en cuenta que deberá eliminar aquellos códigos de cliente que aparezcan repetidos. Resuelva la consulta:
+-- 1. Utilizando la función YEAR de MySQL.
+-- 2. Utilizando la función DATE_FORMAT de MySQL.
+-- 3. Sin utilizar ninguna de las funciones anteriores.
+
+-- ## 9 ## --
+-- Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos que no han sido entregados a tiempo.
+
+-- ## 10 ## --
+-- Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos cuya fecha de entrega ha sido al menos dos días antes de la fecha esperada.
+-- 1. Utilizando la función ADDDATE de MySQL.
+-- 2. Utilizando la función DATEDIFF de MySQL.
+-- 3. ¿Sería posible resolver esta consulta utilizando el operador de suma + o resta -?
+
+-- ## 11 ## --
+--Devuelve un listado de todos los pedidos que fueron en 2009.
+
+-- ## 12 ## --
+-- Devuelve un listado de todos los pedidos que han sido  en el mes de enero de cualquier año.
+
+-- ## 13 ## --
+-- Devuelve un listado con todos los pagos que se realizaron en el año 2008 mediante Paypal. Ordene el resultado de mayor a menor.
+
+-- ## 14 ## --
+-- Devuelve un listado con todas las formas de pago que aparecen en la tabla pago. Tenga en cuenta que no deben aparecer formas de pago repetidas.
+
+-- ## 15 ## --
+-- Devuelve un listado con todos los productos que pertenecen a la gama Ornamentales y que tienen más de 100 unidades en stock. El listado deberá estar ordenado por su precio de venta, mostrando en primer lugar los de mayor precio.
+
+-- ## 16 ## --
+-- Devuelve un listado con todos los clientes que sean de la ciudad de Madrid y cuyo representante de ventas tenga el código de empleado 11 o 30.
+
+
+
+
+
+
+
+
+
+-- ##### CONSULTAS MULTITABLA ##### --- 
+
+
+-- ## 1 ## --
+-- Resuelva todas las consultas mediante INNER JOIN y NATURAL JOIN.
+
+-- ## 2 ## --
+-- Obtén un listado con el nombre de cada cliente y el nombre y apellido de su representante de ventas.
+
+-- ## 3 ## --
+-- Muestra el nombre de los clientes que hayan realizado pagos junto con el nombre de sus representantes de ventas.
+
+-- ## 4 ## --
+-- Muestra el nombre de los clientes que  hayan realizado pagos junto con el nombre de sus representantes de ventas.
+
+-- ## 5 ## --
+-- Devuelve el nombre de los clientes que han hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+
+-- ## 6 ## --
+-- Devuelve el nombre de los clientes que  hayan hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.
+
+-- ## 7 ## --
+-- Devuelve el nombre de los clientes y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+
+-- ## 8 ## --
+-- Devuelve un listado con el nombre de los empleados junto con el nombre de sus jefes.
+
+-- ## 9 ## --
+--Devuelve un listado que muestre el nombre de cada empleados, el nombre de su jefe y el nombre del jefe de sus jefe.
+
+-- ## 10 ## --
+-- Devuelve el nombre de los clientes a los que no se les ha entregado a tiempo un pedido.
+
+-- ## 11 ## --
+-- Devuelve un listado de las diferentes gamas de producto que ha comprado cada cliente.
