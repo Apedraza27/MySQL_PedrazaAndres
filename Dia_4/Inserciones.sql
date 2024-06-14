@@ -1,5 +1,5 @@
 -- #####################
--- ### DIA # 4 - Gestión de datos e inserciones ###
+-- ### DIA # 4 - Relacionamiento de consultas ###
 -- #####################
 
 -- Comando general para revisión de bases de datos creadas
