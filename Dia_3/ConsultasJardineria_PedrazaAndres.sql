@@ -828,63 +828,121 @@ INSERT INTO pago VALUES (38,'PayPal','ak-std-000026','2006-05-26',1171);
 
 -- ## 1 ## --
 -- Devuelve un listado con el código de oficina y la ciudad donde hay oficinas.
-select codigo_oficina, ciudad from oficina;
+select codigo_oficina, ciudad 
+from oficina;
 
 -- ## 2 ## --
 -- Devuelve un listado con la ciudad y el teléfono de las oficinas de España.
-select ciudad, telefono from oficina where pais='España';
+select ciudad, telefono 
+from oficina 
+where pais='España';
+
 -- ## 3 ## --
 -- Devuelve un listado con el nombre, apellidos y email de los empleados cuyo jefe tiene un código de jefe igual a 7.
-select nombre, apellido1, apellido2, email from empleado where codigo_jefe= '7';
+select nombre, apellido1, apellido2, email 
+from empleado 
+where codigo_jefe= '7';
 
 -- ## 4 ## --
 -- Devuelve el nombre del puesto, nombre, apellidos y email del jefe de la empresa.
-select puesto, nombre, apellido1, apellido2, email from empleado where puesto='Director General';
+select puesto, nombre, apellido1, apellido2, email 
+from empleado 
+where puesto='Director General';
 
 -- ## 5 ## --
 -- Devuelve un listado con el nombre, apellidos y puesto de aquellos empleados que no sean representantes de ventas.
-select nombre, apellido1, apellido2, puesto from empleado where puesto≠'Representante Ventas';
+select nombre, apellido1, apellido2, puesto 
+from empleado 
+where puesto≠'Representante Ventas';
 
 -- ## 6 ## --
 -- Devuelve un listado con el nombre de los todos los clientes españoles.
-select nombre from cliente where pais='Spain';
+select nombre 
+from cliente 
+where pais='Spain';
 
 -- ## 7 ## --
 -- Devuelve un listado con los distintos estados por los que puede pasar un pedido.
-select estado from pedido,
+select estado 
+from pedido,
 
 -- ## 8 ## --
 -- Devuelve un listado con el código de cliente de aquellos clientes que realizaron algún pago en 2008. Tenga en cuenta que deberá eliminar aquellos códigos de cliente que aparezcan repetidos. Resuelva la consulta:
 -- 1. Utilizando la función YEAR de MySQL.
+select codigo_cliente
+from pago
+where year(fecha_pago) = 2008;
+
 -- 2. Utilizando la función DATE_FORMAT de MySQL.
+select codigo_cliente
+from pago
+where date_format(fecha_pago, '%Y') = '2008';
+
 -- 3. Sin utilizar ninguna de las funciones anteriores.
+select codigo_cliente
+from pago
+where fecha_pago between '2008-01-01' and '2008-12-31';
+
 
 -- ## 9 ## --
 -- Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos que no han sido entregados a tiempo.
+select codigo_pedido, codigo_cliente, fecha_esperada, fecha_entrega
+from pedido
+where fecha_entrega > fecha_esperada;
 
 -- ## 10 ## --
 -- Devuelve un listado con el código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos cuya fecha de entrega ha sido al menos dos días antes de la fecha esperada.
 -- 1. Utilizando la función ADDDATE de MySQL.
+select codigo_pedido, codigo_cliente, fecha_esperada, fecha_entrega
+from pedido
+where fecha_entrega <= adddate(fecha_esperada, interval -2 day);
+
 -- 2. Utilizando la función DATEDIFF de MySQL.
+select codigo_pedido, codigo_cliente, fecha_esperada, fecha_entrega
+from pedido
+where datediff(fecha_esperada, fecha_entrega) >= 2;
+
 -- 3. ¿Sería posible resolver esta consulta utilizando el operador de suma + o resta -?
+select codigo_pedido, codigo_cliente, fecha_esperada, fecha_entrega
+from pedido
+where fecha_entrega <= fecha_esperada - interval 2 day;
 
 -- ## 11 ## --
---Devuelve un listado de todos los pedidos que fueron en 2009.
+-- Devuelve un listado de todos los pedidos que fueron en 2009.
+select codigo_pedido, codigo_cliente, fecha_pedido, fecha_esperada, fecha_entrega
+from pedido
+where year(fecha_pedido) = 2009;
 
 -- ## 12 ## --
 -- Devuelve un listado de todos los pedidos que han sido  en el mes de enero de cualquier año.
+select codigo_pedido, codigo_cliente, fecha_pedido, fecha_esperada, fecha_entrega
+from pedido
+where month(fecha_pedido) = 1;
 
 -- ## 13 ## --
 -- Devuelve un listado con todos los pagos que se realizaron en el año 2008 mediante Paypal. Ordene el resultado de mayor a menor.
+select codigo_cliente, forma_pago, id_transaccion, fecha_pago, total
+from pago
+where year(fecha_pago) = 2008 and forma_pago = 'Paypal'
+order by total desc;
 
 -- ## 14 ## --
 -- Devuelve un listado con todas las formas de pago que aparecen en la tabla pago. Tenga en cuenta que no deben aparecer formas de pago repetidas.
+select forma_pago
+from pago;
 
 -- ## 15 ## --
 -- Devuelve un listado con todos los productos que pertenecen a la gama Ornamentales y que tienen más de 100 unidades en stock. El listado deberá estar ordenado por su precio de venta, mostrando en primer lugar los de mayor precio.
+select codigo_producto, nombre, gama, cantidad_en_stock, precio_venta
+from producto
+where gama = 'Ornamentales' and cantidad_en_stock > 100
+order by precio_venta desc;
 
 -- ## 16 ## --
 -- Devuelve un listado con todos los clientes que sean de la ciudad de Madrid y cuyo representante de ventas tenga el código de empleado 11 o 30.
+select codigo_cliente, nombre_cliente, ciudad, codigo_empleado_rep_ventas
+from cliente
+where ciudad = 'Madrid' and codigo_empleado_rep_ventas in (11, 30);
 
 
 
@@ -896,36 +954,76 @@ select estado from pedido,
 
 -- ##### CONSULTAS MULTITABLA ##### --- 
 
-
--- ## 1 ## --
 -- Resuelva todas las consultas mediante INNER JOIN y NATURAL JOIN.
 
--- ## 2 ## --
+-- ## 1 ## --
 -- Obtén un listado con el nombre de cada cliente y el nombre y apellido de su representante de ventas.
+select c.nombre_cliente, e.nombre, e.apellido1
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado;
+
+-- ## 2 ## --
+-- Muestra el nombre de los clientes que hayan realizado pagos junto con el nombre de sus representantes de ventas.
+select c.nombre_cliente, e.nombre, e.apellido1
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join pago p on c.codigo_cliente = p.codigo_cliente;
 
 -- ## 3 ## --
--- Muestra el nombre de los clientes que hayan realizado pagos junto con el nombre de sus representantes de ventas.
+-- Muestra el nombre de los clientes que  hayan realizado pagos junto con el nombre de sus representantes de ventas.
+select c.nombre_cliente, e.nombre, e.apellido1
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+natural join pago;
 
 -- ## 4 ## --
--- Muestra el nombre de los clientes que  hayan realizado pagos junto con el nombre de sus representantes de ventas.
+-- Devuelve el nombre de los clientes que han hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+select c.nombre_cliente, e.nombre, e.apellido1, o.ciudad
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = o.codigo_oficina
+natural join pago;
 
 -- ## 5 ## --
--- Devuelve el nombre de los clientes que han hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+-- Devuelve el nombre de los clientes que  hayan hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.
+select c.nombre_cliente, e.nombre, e.apellido1, o.ciudad, o.linea_direccion1, o.linea_direccion2
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = o.codigo_oficina
+natural join pago
+where o.ciudad = 'Fuenlabrada';
 
 -- ## 6 ## --
--- Devuelve el nombre de los clientes que  hayan hecho pagos y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.
+-- Devuelve el nombre de los clientes y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+select c.nombre_cliente, e.nombre, e.apellido1, o.ciudad
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = o.codigo_oficina;
 
 -- ## 7 ## --
--- Devuelve el nombre de los clientes y el nombre de sus representantes junto con la ciudad de la oficina a la que pertenece el representante.
+-- Devuelve un listado con el nombre de los empleados junto con el nombre de sus jefes.
+select e.nombre, e.apellido1, ej.nombre as nombre_jefe, ej.apellido1 as apellido_jefe
+from empleado e
+inner join empleado ej on e.codigo_jefe = ej.codigo_empleado;
 
 -- ## 8 ## --
--- Devuelve un listado con el nombre de los empleados junto con el nombre de sus jefes.
+-- Devuelve un listado que muestre el nombre de cada empleados, el nombre de su jefe y el nombre del jefe de sus jefe.
+select e.nombre, e.apellido1, ej.nombre as nombre_jefe, ej.apellido1 as apellido_jefe, ejj.nombre as nombre_jefe_jefe, ejj.apellido1 as apellido_jefe_jefe
+from empleado e
+inner join empleado ej on e.codigo_jefe = ej.codigo_empleado
+inner join empleado ejj on ej.codigo_jefe = ejj.codigo_empleado;
 
 -- ## 9 ## --
---Devuelve un listado que muestre el nombre de cada empleados, el nombre de su jefe y el nombre del jefe de sus jefe.
+-- Devuelve el nombre de los clientes a los que no se les ha entregado a tiempo un pedido.
+select c.nombre_cliente
+from cliente c
+inner join pedido p on c.codigo_cliente = p.codigo_cliente
+where p.fecha_entrega > p.fecha_esperada;
 
 -- ## 10 ## --
--- Devuelve el nombre de los clientes a los que no se les ha entregado a tiempo un pedido.
-
--- ## 11 ## --
 -- Devuelve un listado de las diferentes gamas de producto que ha comprado cada cliente.
+select c.nombre_cliente, distinct p.gama
+from cliente c
+inner join pedido pe on c.codigo_cliente = pe.codigo_cliente
+inner join detalle_pedido dp on pe.codigo_pedido = dp.codigo_pedido
+inner join producto p on dp.codigo_producto = p.codigo_producto;
